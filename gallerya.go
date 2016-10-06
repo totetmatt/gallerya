@@ -18,7 +18,7 @@ func thumb_from_dir(path string)  {
     files, _ := ioutil.ReadDir(path)
     wg.Add(len(files))
     for _, f := range files {
-            go do_thumb(path,f.Name())
+            go do_thumb(path,f.Name()) // TODO : Evole to worker https://gobyexample.com/worker-pools
             
     }
 }
