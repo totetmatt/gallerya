@@ -7,21 +7,21 @@ import (
     "os"
     "path/filepath"
     "github.com/flosch/pongo2"
-
 )
     
 /** Configuration Struct >>**/
 type GalleryaConfiguration struct {
     thumb_directory string
     original_directory  string
+    files []os.FileInfo
 }
     
-
 func (config *GalleryaConfiguration) preCheck() {
     r,_ := fexists(config.thumb_directory)
     if(!r) {
         os.MkdirAll(config.thumb_directory, os.ModePerm)
     }
+    config.get_original_files()
 }
 
 func (config *GalleryaConfiguration) thumb_file(filename string) string {
@@ -30,6 +30,10 @@ func (config *GalleryaConfiguration) thumb_file(filename string) string {
 
 func (config *GalleryaConfiguration) original_file(filename string) string {
     return filepath.Join(config.original_directory,filename)   
+}
+
+func (config *GalleryaConfiguration) get_original_files() {
+    config.files,_ = ioutil.ReadDir(config.original_directory)
 }
 /**<< Configuration Struct **/
 
@@ -42,38 +46,38 @@ func worker(config *GalleryaConfiguration, jobs <-chan string, results chan<- st
         results <- j
     }
 }
-
-func thumb_from_dir(config *GalleryaConfiguration)  {
-    
+func image_processing(config *GalleryaConfiguration) {
     jobs := make(chan string, 1000)
     results := make(chan string, 1000)
-
+   
+    // Init workers
     for w := 1; w <= 8; w++ {
         go worker(config, jobs, results)
     }
-  
-    
-    files, _ := ioutil.ReadDir(config.original_directory)
-    for _, f := range files {
+    // Give job to workers
+    for _, f := range config.files {
             jobs <- f.Name()
 
     }
     close(jobs)
-    generate_html(files,config)
-    
-    for a := 1; a <=  len(files); a++ {
+
+    //Harverst wokers results
+    for a := 1; a <=  len(config.files); a++ {
         r := <-results
         fmt.Println("Finished "+r)
     }
 
-
 }
 
-func generate_html(files []os.FileInfo, config *GalleryaConfiguration) {
+func generate(config *GalleryaConfiguration)  {
+    image_processing(config)
+    generate_html(config.files,config)
+}
+
+func generate_html(config *GalleryaConfiguration) {
     f, _ := os.Create("./index.html")
     defer f.Close()
-
-    err := templateIndex.ExecuteWriter(pongo2.Context{"files": files,"dir_original":config.original_directory,"dir_thumb":config.thumb_directory}, f)
+    err := templateIndex.ExecuteWriter(pongo2.Context{"files": config.files,"dir_original":config.original_directory,"dir_thumb":config.thumb_directory}, f)
     if err != nil {
         panic(err)
     }
@@ -102,5 +106,5 @@ func main() {
     config.original_directory = "./original"
 
     config.preCheck()
-    thumb_from_dir(&config)
+    generate(&config)
 }
