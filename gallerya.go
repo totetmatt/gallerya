@@ -71,7 +71,7 @@ func image_processing(config *GalleryaConfiguration) {
 
 func generate(config *GalleryaConfiguration)  {
     image_processing(config)
-    generate_html(config.files,config)
+    generate_html(config)
 }
 
 func generate_html(config *GalleryaConfiguration) {
