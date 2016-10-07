@@ -6,10 +6,13 @@ import (
     "fmt"
     "os"
     "path/filepath"
+    "github.com/flosch/pongo2"
 
 )
 var dir_thumb = "./thumb"
 var dir_original = "./original"
+
+var templateIndex = pongo2.Must(pongo2.FromFile("./index.template"))
 
 func worker(id int, jobs <-chan string, results chan<- string) {
     for j := range jobs {
@@ -31,20 +34,33 @@ func thumb_from_dir(path string)  {
     
     files, _ := ioutil.ReadDir(path)
     for _, f := range files {
-            jobs <- filepath.Join(path,f.Name())    
+            jobs <- filepath.Join(path,f.Name())   
+
     }
     close(jobs)
+    generate_html(files)
     
-
     for a := 1; a <=  len(files); a++ {
         r := <-results
         fmt.Println("Finished "+r)
+    }
+
+
+}
+
+func generate_html(files []os.FileInfo) {
+    f, _ := os.Create("./index.html")
+    defer f.Close()
+
+    err := templateIndex.ExecuteWriter(pongo2.Context{"files": files,"dir_original":dir_original,"dir_thumb":dir_thumb}, f)
+    if err != nil {
+        panic(err)
     }
 }
 
 func do_thumb(path string) {
     img, err := imaging.Open(path)
-    dst := imaging.Fill(img, 100, 100, imaging.Center, imaging.Lanczos)
+    dst := imaging.Fill(img, 360, 247, imaging.Center, imaging.Lanczos)
     _,file := filepath.Split(path)
     err2 := imaging.Save(dst, filepath.Join(dir_thumb,file))
     if err2 != nil {
@@ -60,6 +76,8 @@ func fexists(path string) (bool, error) {
 }
 
 func main() {
+
+
     r,_ := fexists(dir_thumb)
     if(!r) {
         os.MkdirAll(dir_thumb, os.ModePerm)
