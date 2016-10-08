@@ -8,8 +8,13 @@ import (
     "path/filepath"
     "github.com/flosch/pongo2"
     "flag"
+    "totetmatt/gallerya/exifdata"
+    "log"
 )
-    
+type Media struct {
+    name string
+    metadata string
+}    
 /** Configuration Struct >>**/
 type GalleryaConfiguration struct {
     thumb_directory string
@@ -19,9 +24,10 @@ type GalleryaConfiguration struct {
 
 
     workers int
-    skip_image_processing bool
+    skip_image_thumb_processing bool
 
-    files []os.FileInfo
+    medias []Media
+    metadata map[string]string
 }
     
 func (config *GalleryaConfiguration) preCheck() {
@@ -41,7 +47,13 @@ func (config *GalleryaConfiguration) original_file(filename string) string {
 }
 
 func (config *GalleryaConfiguration) get_original_files() {
-    config.files,_ = ioutil.ReadDir(config.original_directory)
+    files,_ := ioutil.ReadDir(config.original_directory)
+    config.medias =  make([]Media,len(files))
+
+    for i := 0; i < len(files); i++ {
+        config.medias[i] = Media{}
+        config.medias[i].name = files[i].Name()
+    }
 }
 /**<< Configuration Struct **/
 
@@ -50,56 +62,73 @@ var templateIndex = pongo2.Must(pongo2.FromFile("./index.template"))
 func worker(config *GalleryaConfiguration, jobs <-chan string, results chan<- string) {
     for j := range jobs {
         fmt.Println("Processing image", j)
-        do_thumb(j,config)
+        if(!config.skip_image_thumb_processing) {
+            process_image(j,config)
+        }
+        
+
         results <- j
     }
 }
 func image_processing(config *GalleryaConfiguration) {
     jobs := make(chan string, 1000)
     results := make(chan string, 1000)
-   
     // Init workers
     for w := 1; w <= config.workers; w++ {
         go worker(config, jobs, results)
     }
     // Give job to workers
-    for _, f := range config.files {
-            jobs <- f.Name()
+    for _, f := range config.medias{
+            jobs <- f.name
 
     }
     close(jobs)
 
     //Harverst wokers results
-    for a := 1; a <=  len(config.files); a++ {
+    for a := 1; a <=  len(config.medias); a++ {
         r := <-results
         fmt.Println("Finished "+r)
     }
 
+    // Metadata 
+    for i := 0; i < len(config.medias); i++ {
+        
+        config.medias[i].metadata = extract_data(config.medias[i].name,config)
+    }
 }
 
 func generate(config *GalleryaConfiguration)  {
-    if(!config.skip_image_processing) {
-        image_processing(config)
-    }
+   
+    image_processing(config)
+    
     generate_html(config)
 }
 
 func generate_html(config *GalleryaConfiguration) {
     f, _ := os.Create("./index.html")
     defer f.Close()
-    err := templateIndex.ExecuteWriter(pongo2.Context{"config":config,"files": config.files}, f)
+    err := templateIndex.ExecuteWriter(pongo2.Context{"config":config}, f)
     if err != nil {
         panic(err)
     }
 }
 
-func do_thumb(file string, config *GalleryaConfiguration) {
+func process_image(file string, config *GalleryaConfiguration) {
     img, err := imaging.Open(config.original_file(file))
     dst := imaging.Fill(img, 360, 247, imaging.Center, imaging.Lanczos)
     err2 := imaging.Save(dst, config.thumb_file(file))
     if err2 != nil {
         panic(err)
     }
+}
+func extract_data(file string,config *GalleryaConfiguration) string {
+    f, err := os.Open(config.original_file(file))
+    if err != nil {
+        log.Fatal(err)
+    }
+    data :=exifdata.ExifData{}
+    data.Grab_data(f)
+    return data.String()
 }
 
 func fexists(path string) (bool, error) {
@@ -111,14 +140,14 @@ func fexists(path string) (bool, error) {
 
 func main() {
     config := GalleryaConfiguration{}
-
+    config.metadata = make(map[string]string)
     flag.StringVar(&config.thumb_directory,"thumbnail", "./thumb", "Thumbnail directory")
     flag.StringVar(&config.original_directory ,"original", "./original", "Original Photo directory")
 
     flag.StringVar(&config.title ,"title", "Gallerya", "Title of the gallery")
 
     flag.IntVar(&config.workers,"workers",4,"Number of workers")
-    flag.BoolVar(&config.skip_image_processing,"skip-image-process",false,"Skip the image transformation")
+    flag.BoolVar(&config.skip_image_thumb_processing,"skip-image-thumb-processing",false,"Skip the image transformation")
     
     flag.Parse()
     config.preCheck()

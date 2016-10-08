@@ -31,11 +31,11 @@
 
 				<!-- Main -->
 					<div id="main">
-                        {% for file in files %}
+                        {% for file in config.medias %}
 						<article class="thumb">
-							<a href="{{config.original_directory}}/{{file.Name()}}" class="image"><img src="{{config.thumb_directory}}/{{file.Name()}}" alt="" /></a>
+							<a href="{{config.original_directory}}/{{file.name}}" class="image"><img src="{{config.thumb_directory}}/{{file.name}}" alt="" /></a>
 							<h2>Magna feugiat lorem</h2>
-							<p>Nunc blandit nisi ligula magna sodales lectus elementum non. Integer id venenatis velit.</p>
+							<p>{{file.metadata}}</p>
 						</article>
                         {% endfor %}
 					</div>
