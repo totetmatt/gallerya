@@ -7,12 +7,20 @@ import (
     "os"
     "path/filepath"
     "github.com/flosch/pongo2"
+    "flag"
 )
     
 /** Configuration Struct >>**/
 type GalleryaConfiguration struct {
     thumb_directory string
     original_directory  string
+    
+    title string
+
+
+    workers int
+    skip_image_processing bool
+
     files []os.FileInfo
 }
     
@@ -51,7 +59,7 @@ func image_processing(config *GalleryaConfiguration) {
     results := make(chan string, 1000)
    
     // Init workers
-    for w := 1; w <= 8; w++ {
+    for w := 1; w <= config.workers; w++ {
         go worker(config, jobs, results)
     }
     // Give job to workers
@@ -70,14 +78,16 @@ func image_processing(config *GalleryaConfiguration) {
 }
 
 func generate(config *GalleryaConfiguration)  {
-    image_processing(config)
+    if(!config.skip_image_processing) {
+        image_processing(config)
+    }
     generate_html(config)
 }
 
 func generate_html(config *GalleryaConfiguration) {
     f, _ := os.Create("./index.html")
     defer f.Close()
-    err := templateIndex.ExecuteWriter(pongo2.Context{"files": config.files,"dir_original":config.original_directory,"dir_thumb":config.thumb_directory}, f)
+    err := templateIndex.ExecuteWriter(pongo2.Context{"config":config,"files": config.files}, f)
     if err != nil {
         panic(err)
     }
@@ -102,9 +112,15 @@ func fexists(path string) (bool, error) {
 func main() {
     config := GalleryaConfiguration{}
 
-    config.thumb_directory = "./thumb"
-    config.original_directory = "./original"
+    flag.StringVar(&config.thumb_directory,"thumbnail", "./thumb", "Thumbnail directory")
+    flag.StringVar(&config.original_directory ,"original", "./original", "Original Photo directory")
 
+    flag.StringVar(&config.title ,"title", "Gallerya", "Title of the gallery")
+
+    flag.IntVar(&config.workers,"workers",4,"Number of workers")
+    flag.BoolVar(&config.skip_image_processing,"skip-image-process",false,"Skip the image transformation")
+    
+    flag.Parse()
     config.preCheck()
     generate(&config)
 }

@@ -6,7 +6,7 @@
 -->
 <html>
 	<head>
-		<title>Multiverse by HTML5 UP</title>
+		<title>.: {{config.title}} :.</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<!--[if lte IE 8]><script src="static/assets/js/ie/html5shiv.js"></script><![endif]-->
@@ -21,7 +21,7 @@
 
 				<!-- Header -->
 					<header id="header">
-						<h1><a href="index.html"><strong>Multiverse</strong> by HTML5 UP</a></h1>
+						<h1><a href="index.html"><strong>{{config.title}}</strong> by HTML5 UP</a></h1>
 						<nav>
 							<ul>
 								<li><a href="#footer" class="icon fa-info-circle">About</a></li>
@@ -33,7 +33,7 @@
 					<div id="main">
                         {% for file in files %}
 						<article class="thumb">
-							<a href="{{dir_original}}/{{file.Name()}}" class="image"><img src="{{dir_thumb}}/{{file.Name()}}" alt="" /></a>
+							<a href="{{config.original_directory}}/{{file.Name()}}" class="image"><img src="{{config.thumb_directory}}/{{file.Name()}}" alt="" /></a>
 							<h2>Magna feugiat lorem</h2>
 							<p>Nunc blandit nisi ligula magna sodales lectus elementum non. Integer id venenatis velit.</p>
 						</article>
@@ -45,7 +45,7 @@
 						<div class="inner split">
 							<div>
 								<section>
-									<h2>Magna feugiat sed adipiscing</h2>
+									<h2>{{ config.title}}</h2>
 									<p>Nulla consequat, ex ut suscipit rutrum, mi dolor tincidunt erat, et scelerisque turpis ipsum eget quis orci mattis aliquet. Maecenas fringilla et ante at lorem et ipsum. Dolor nulla eu bibendum sapien. Donec non pharetra dui. Nulla consequat, ex ut suscipit rutrum, mi dolor tincidunt erat, et scelerisque turpis ipsum.</p>
 								</section>
 								<section>
