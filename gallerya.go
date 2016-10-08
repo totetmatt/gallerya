@@ -19,7 +19,8 @@ type Media struct {
 type GalleryaConfiguration struct {
     thumb_directory string
     original_directory  string
-    
+    static_path string
+
     title string
 
 
@@ -92,7 +93,6 @@ func image_processing(config *GalleryaConfiguration) {
 
     // Metadata 
     for i := 0; i < len(config.medias); i++ {
-        
         config.medias[i].metadata = extract_data(config.medias[i].name,config)
     }
 }
@@ -143,7 +143,7 @@ func main() {
     config.metadata = make(map[string]string)
     flag.StringVar(&config.thumb_directory,"thumbnail", "./thumb", "Thumbnail directory")
     flag.StringVar(&config.original_directory ,"original", "./original", "Original Photo directory")
-
+    flag.StringVar(&config.static_path ,"static", "./static", "Path to Static File")
     flag.StringVar(&config.title ,"title", "Gallerya", "Title of the gallery")
 
     flag.IntVar(&config.workers,"workers",4,"Number of workers")
