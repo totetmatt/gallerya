@@ -24,7 +24,7 @@ type GalleryaConfiguration struct {
     title string
     description string
     author string
-
+    base_url string
     twitter string 
     facebook string
     instagram string
@@ -73,8 +73,6 @@ func worker(config *GalleryaConfiguration, jobs <-chan string, results chan<- st
         if(!config.skip_image_thumb_processing) {
             process_image(j,config)
         }
-        
-
         results <- j
     }
 }
@@ -156,6 +154,7 @@ func main() {
     flag.StringVar(&config.static_path ,"static", "./static", "Path to Static File")
 
     flag.StringVar(&config.title ,"title", "Gallerya", "Title of the gallery")
+    flag.StringVar(&config.base_url ,"base-url", "/", "Full url of the gallery")
     flag.StringVar(&config.description ,"description",  "", "Small description")
     flag.StringVar(&config.author ,"author",  "", "Author name")
     flag.StringVar(&config.twitter ,"twitter",  "", "Twitter name")

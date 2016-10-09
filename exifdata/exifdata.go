@@ -1,7 +1,6 @@
 package exifdata
 
 import (
-    "log"
     "io"
     "github.com/rwcarlsen/goexif/exif"
     "github.com/rwcarlsen/goexif/mknote"
@@ -19,7 +18,6 @@ func (d *ExifData) Grab_data(r io.Reader) {
     exif.RegisterParsers(mknote.All...)
     x, err := exif.Decode(r)
     if err != nil {
-        log.Println(err)
         d.focal_length =""
         d.date =""
         d.fnumber =""

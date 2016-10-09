@@ -13,9 +13,14 @@
 		<link rel="stylesheet" href="{{config.static_path}}/assets/css/main.css" />
 		<!--[if lte IE 9]><link rel="stylesheet" href="{{config.static_path}}/assets/css/ie9.css" /><![endif]-->
 		<!--[if lte IE 8]><link rel="stylesheet" href="{{config.static_path}}/assets/css/ie8.css" /><![endif]-->
-        <meta property="og:title" content="{{config.title}}"/>
-        <meta property="og:url" content="http://www.imdb.com/title/tt0117500/" />
-        <meta property="og:image" content="./original/{{config.medias.0.name}}" />
+        <meta property="og:title" content="{{config.title}}" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="{{config.base_url}}" />
+        <meta property="og:description" content="{{config.description}}" />
+        {% for file in config.medias %}<meta property="og:image" content="{{config.base_url}}/{{config.thumb_directory}}/{{file.name}}" />
+        {% endfor %}
+ 
+        
 	</head>
 	<body>
 
