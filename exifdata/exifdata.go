@@ -19,17 +19,23 @@ func (d *ExifData) Grab_data(r io.Reader) {
     exif.RegisterParsers(mknote.All...)
     x, err := exif.Decode(r)
     if err != nil {
-        log.Fatal(err)
+        log.Println(err)
+        d.focal_length =""
+        d.date =""
+        d.fnumber =""
+        d.exposure_time =""
+        d.iso =""
+    } else {
+        d.focal_data(x)
+        d.date_data(x)
+        d.fnumber_data(x)
+        d.exposureTime_data(x)
+        d.iso_data(x)
     }
-    d.focal_data(x)
-    d.date_data(x)
-    d.fnumber_data(x)
-    d.exposureTime_data(x)
-    d.iso_data(x)
 }
 func (d *ExifData) focal_data(e *exif.Exif) {
     focal, _ := e.Get(exif.FocalLength)
-    numer , _ := focal.Rat(0) // retrieve first (only) rat. value
+    numer , _ := focal.Rat(0) 
     d.focal_length = numer.FloatString(0)
 }
 func (d *ExifData) date_data(e *exif.Exif) {
@@ -53,19 +59,3 @@ func (d *ExifData) iso_data(e *exif.Exif) {
 func (d *ExifData) String() string {
     return "F/"+d.fnumber+" - ISO/"+d.iso+" - "+d.focal_length+ "mm - "+d.exposure_time +"s"
 }
-/*
-func ExampleDecode() {
-    fname := "original/1-DSC_0103.jpg"
-    data := ExifData{}
-
-    f, err := os.Open(fname)
-    if err != nil {
-        log.Fatal(err)
-    }
-
-    // Optionally register camera makenote data parsing - currently Nikon and
-    // Canon are supported.
-    
-    data.grab_data(f)
-
-}*/

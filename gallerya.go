@@ -99,15 +99,17 @@ func image_processing(config *GalleryaConfiguration) {
     }
 
     // Metadata 
+    
     for i := 0; i < len(config.medias); i++ {
+        log.Println(config.medias[i].name)
         config.medias[i].metadata = extract_data(config.medias[i].name,config)
+
     }
 }
 
 func generate(config *GalleryaConfiguration)  {
    
     image_processing(config)
-    
     generate_html(config)
 }
 
@@ -131,7 +133,8 @@ func process_image(file string, config *GalleryaConfiguration) {
 func extract_data(file string,config *GalleryaConfiguration) string {
     f, err := os.Open(config.original_file(file))
     if err != nil {
-        log.Fatal(err)
+        return ""
+        log.Println(err)
     }
     data :=exifdata.ExifData{}
     data.Grab_data(f)
