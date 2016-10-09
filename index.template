@@ -13,6 +13,9 @@
 		<link rel="stylesheet" href="{{config.static_path}}/assets/css/main.css" />
 		<!--[if lte IE 9]><link rel="stylesheet" href="{{config.static_path}}/assets/css/ie9.css" /><![endif]-->
 		<!--[if lte IE 8]><link rel="stylesheet" href="{{config.static_path}}/assets/css/ie8.css" /><![endif]-->
+        <meta property="og:title" content="{{config.title}}"/>
+        <meta property="og:url" content="http://www.imdb.com/title/tt0117500/" />
+        <meta property="og:image" content="./original/{{config.medias.0.name}}" />
 	</head>
 	<body>
 
@@ -57,7 +60,7 @@
 
 										{% if !(config.instagram in "") %}<li><a href="http://instagram.com/{{config.instagram}}" class="icon fa-instagram"><span class="label">Instagram</span></a></li>{% endif %}
 
-										{% if !(config.github in "") %}<li><a href="http://github.com/{{config.instagram}}" class="icon fa-github"><span class="label">GitHub</span></a></li>{% endif %}
+										{% if !(config.github in "") %}<li><a href="http://github.com/{{config.github}}" class="icon fa-github"><span class="label">GitHub</span></a></li>{% endif %}
 										
 										{% if !(config.linkedin in "") %}<li><a href="http://linkedin.com/{{config.linkedin}}" class="icon fa-linkedin"><span class="label">LinkedIn</span></a></li>{% endif %}
 
