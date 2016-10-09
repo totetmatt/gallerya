@@ -34,7 +34,7 @@
                         {% for file in config.medias %}
 						<article class="thumb">
 							<a href="{{config.original_directory}}/{{file.name}}" class="image"><img src="{{config.thumb_directory}}/{{file.name}}" alt="" /></a>
-							<h2>Magna feugiat lorem</h2>
+							<h2>{{config.title}}</h2>
 							<p>{{file.metadata}}</p>
 						</article>
                         {% endfor %}
