@@ -22,7 +22,14 @@ type GalleryaConfiguration struct {
     static_path string
 
     title string
+    description string
+    author string
 
+    twitter string 
+    facebook string
+    instagram string
+    github string
+    linkedin string
 
     workers int
     skip_image_thumb_processing bool
@@ -144,7 +151,15 @@ func main() {
     flag.StringVar(&config.thumb_directory,"thumbnail", "./thumb", "Thumbnail directory")
     flag.StringVar(&config.original_directory ,"original", "./original", "Original Photo directory")
     flag.StringVar(&config.static_path ,"static", "./static", "Path to Static File")
+
     flag.StringVar(&config.title ,"title", "Gallerya", "Title of the gallery")
+    flag.StringVar(&config.description ,"description",  "", "Small description")
+    flag.StringVar(&config.author ,"author",  "", "Author name")
+    flag.StringVar(&config.twitter ,"twitter",  "", "Twitter name")
+    flag.StringVar(&config.facebook ,"facebook",  "", "Facebook name")
+    flag.StringVar(&config.github ,"github",  "", "Github name")
+    flag.StringVar(&config.instagram ,"instagram",  "", "Instagram name")
+    flag.StringVar(&config.linkedin ,"linkedin",  "", "Linkedin name")
 
     flag.IntVar(&config.workers,"workers",4,"Number of workers")
     flag.BoolVar(&config.skip_image_thumb_processing,"skip-image-thumb-processing",false,"Skip the image transformation")

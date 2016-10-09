@@ -21,7 +21,7 @@
 
 				<!-- Header -->
 					<header id="header">
-						<h1><a href="index.html"><strong>{{config.title}}</strong> by HTML5 UP</a></h1>
+						<h1><a href="index.html"><strong>{{config.title}}</strong>{% if !(config.author in "") %}  by {{config.author}} {% endif %}</a></h1>
 						<nav>
 							<ul>
 								<li><a href="#footer" class="icon fa-info-circle">About</a></li>
@@ -46,23 +46,27 @@
 							<div>
 								<section>
 									<h2>{{ config.title}}</h2>
-									<p>Nulla consequat, ex ut suscipit rutrum, mi dolor tincidunt erat, et scelerisque turpis ipsum eget quis orci mattis aliquet. Maecenas fringilla et ante at lorem et ipsum. Dolor nulla eu bibendum sapien. Donec non pharetra dui. Nulla consequat, ex ut suscipit rutrum, mi dolor tincidunt erat, et scelerisque turpis ipsum.</p>
+									<p>{{config.description}}</p>
 								</section>
 								<section>
 									<h2>Follow me on ...</h2>
 									<ul class="icons">
-										<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
-										<li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
-										<li><a href="#" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
-										<li><a href="#" class="icon fa-github"><span class="label">GitHub</span></a></li>
-										<li><a href="#" class="icon fa-dribbble"><span class="label">Dribbble</span></a></li>
-										<li><a href="#" class="icon fa-linkedin"><span class="label">LinkedIn</span></a></li>
+										{% if !(config.twitter in "") %} <li><a href="http://twitter.com/{{config.twitter}}" class="icon fa-twitter"><span class="label">Twitter</span></a></li> {% endif %}
+
+										{% if !(config.facebook in "") %}<li><a href="http://facebook.com/{{config.facebook}}" class="icon fa-facebook"><span class="label">Facebook</span></a></li>{% endif %}
+
+										{% if !(config.instagram in "") %}<li><a href="http://instagram.com/{{config.instagram}}" class="icon fa-instagram"><span class="label">Instagram</span></a></li>{% endif %}
+
+										{% if !(config.github in "") %}<li><a href="http://github.com/{{config.instagram}}" class="icon fa-github"><span class="label">GitHub</span></a></li>{% endif %}
+										
+										{% if !(config.linkedin in "") %}<li><a href="http://linkedin.com/{{config.linkedin}}" class="icon fa-linkedin"><span class="label">LinkedIn</span></a></li>{% endif %}
+
 									</ul>
 								</section>
 								<p class="copyright">
-									&copy; Unttled. Design: <a href="http://html5up.net">HTML5 UP</a>.
+									{% if !(config.author in "") %} &copy;  {{config.author}} {% endif %}. Design: <a href="http://html5up.net">HTML5 UP</a>.
 								</p>
-							</div>
+							</div><!--
 							<div>
 								<section>
 									<h2>Get in touch</h2>
@@ -82,7 +86,7 @@
 										</ul>
 									</form>
 								</section>
-							</div>
+							</div>-->
 						</div>
 					</footer>
 
