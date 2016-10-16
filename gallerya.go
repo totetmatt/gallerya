@@ -33,6 +33,7 @@ type GalleryaConfiguration struct {
 
     workers int
     skip_image_thumb_processing bool
+    reverse_order bool
 
     medias []Media
     metadata map[string]string
@@ -57,10 +58,17 @@ func (config *GalleryaConfiguration) original_file(filename string) string {
 func (config *GalleryaConfiguration) get_original_files() {
     files,_ := ioutil.ReadDir(config.original_directory)
     config.medias =  make([]Media,len(files))
-
-    for i := 0; i < len(files); i++ {
-        config.medias[i] = Media{}
-        config.medias[i].name = files[i].Name()
+    if (config.reverse_order == false) {
+        for i := 0; i < len(files); i++ {
+            config.medias[i] = Media{}
+            config.medias[i].name = files[i].Name()
+        }
+    } else {
+        fmt.Println("REVERSE ORDER")
+        for i := 0; i < len(files); i++ {
+            config.medias[len(files)-1-i] = Media{}
+            config.medias[len(files)-1-i].name = files[i].Name()
+        }
     }
 }
 /**<< Configuration Struct **/
@@ -165,7 +173,8 @@ func main() {
 
     flag.IntVar(&config.workers,"workers",4,"Number of workers")
     flag.BoolVar(&config.skip_image_thumb_processing,"skip-image-thumb-processing",false,"Skip the image transformation")
-    
+    flag.BoolVar(&config.reverse_order,"reverse",false,"Reverse Image Order")
+
     flag.Parse()
     config.preCheck()
     generate(&config)
